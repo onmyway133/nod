@@ -2,6 +2,8 @@
 
 A task manager where each task is a markdown file. Works great with git and Claude Code.
 
+![](images/board.png)
+
 ## Install
 
 Requires [Bun](https://bun.sh).
