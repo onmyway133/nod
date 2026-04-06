@@ -2,6 +2,14 @@
 
 A task manager where each task is a markdown file. Works great with git and Claude Code.
 
+## Install
+
+Requires [Bun](https://bun.sh).
+
+```bash
+npm install -g @onmyway133/nod
+```
+
 ## How it works
 
 Each task lives in its own `.md` file inside a `tasks/` folder:
@@ -13,107 +21,44 @@ tasks/
   subtask-3-write-migrations.md
 ```
 
-Tasks have a header (frontmatter) with fields like status, priority, and parent. The rest of the file is free-form markdown — notes, research, work log, anything you want.
+Tasks have a YAML header with fields like status, priority, and parent. The rest of the file is free-form markdown — description, notes, work log, anything you want.
 
 Because tasks are plain files, you can commit them to git, review diffs, and read them in any editor.
-
-## Install
-
-Requires [Bun](https://bun.sh).
-
-```bash
-cd nod
-bun install
-bun link
-```
-
-After linking, the `nod` command is available anywhere.
 
 ## Quick start
 
 ```bash
-# Set up a project
 cd my-project
 nod init
 
-# Create tasks
 nod create epic "Build auth system"
 nod create task "Design database schema" --parent epic-1 --priority high
 nod create subtask "Write migrations" --parent task-2
 nod create bug "Fix token expiry" --parent task-2
 
-# See what to work on
-nod available
-
-# Claim a task
-nod update task-2 --status in-progress
-
-# Add a note
-nod note task-2 "Decided to use UUIDs for user IDs"
-
-# See all tasks in an epic
-nod epic-tasks epic-1
-
-# Visual tree
-nod tree epic-1
-```
-
-## Task types
-
-| Type | Description | Can have parent |
-|------|-------------|----------------|
-| `epic` | A large goal or feature | No |
-| `task` | A piece of work | epic |
-| `subtask` | A small step inside a task | task, bug |
-| `bug` | A defect to fix | epic, task |
-
-## Task file format
-
-```markdown
----
-id: task-2
-title: "Design database schema"
-type: task
-status: todo
-priority: high
-parent: epic-1
-tags:
-  - database
-created: 2026-04-05
-updated: 2026-04-05
----
-
-# Design database schema
-
-Decide on the tables and relationships for the auth system.
-
-## Notes
-
-Looking at PostgreSQL with UUID primary keys.
-
-## Work Log
-
-- 2026-04-05: Started research on schema options
+nod available        # what to work on
+nod tree epic-1      # visual overview
+nod ui               # open Kanban board in browser
 ```
 
 ## Commands
 
 ### `nod init`
-Set up a new nod project in the current directory. Creates `.nod/` and `tasks/`.
+Set up a nod project in the current directory. Creates `.nod/` and `tasks/`.
 
 ### `nod create <type> <title>`
-Create a new task.
+Create a task. Types: `epic`, `task`, `subtask`, `bug`.
 
 ```bash
 nod create epic "Launch v2"
 nod create task "Write tests" --parent epic-1 --priority high
-nod create bug "Crash on logout" --parent task-3 --tags auth,critical
+nod create bug "Crash on logout" --parent task-3 --tags auth,crash
 ```
 
 Options: `--parent <id>`, `--priority <p>`, `--tags <t1,t2>`
 
 ### `nod list`
-List tasks. Filter by any field.
+List tasks with optional filters.
 
 ```bash
 nod list
@@ -124,11 +69,11 @@ nod list --json
 ```
 
 ### `nod available`
-Show tasks that are ready to work on (`todo` or `in-progress`). Sorted by priority.
+Show tasks ready to work on (`todo` or `in-progress`), sorted by priority.
 
 ```bash
 nod available
-nod available --json   # for Claude Code
+nod available --json
 ```
 
 ### `nod get <id>`
@@ -150,10 +95,10 @@ nod update task-2 --tags backend,auth
 ```
 
 ### `nod note <id> <text>`
-Append a note with today's date to the Work Log section.
+Append a timestamped note to the task's Work Log.
 
 ```bash
-nod note task-2 "Decided to use UUIDs"
+nod note task-2 "Decided to use UUIDs for user IDs"
 ```
 
 ### `nod subtasks <id>`
@@ -177,57 +122,70 @@ Show the task hierarchy as a tree.
 
 ```bash
 nod tree epic-1
-# epic-1 [in-progress] Launch v2
-# └── task-2 [todo] Write tests
-#     └── subtask-3 [todo] Add edge cases
+# epic-1 [in-progress] Build auth system
+# └── task-2 [in-progress] Design database schema
+#     └── subtask-3 [todo] Write migrations
 ```
 
 ### `nod open <id>`
-Open the task file in your `$EDITOR`.
+Open the task file in `$EDITOR`.
 
 ```bash
 nod open task-2
 ```
 
+### `nod ui`
+Open a Kanban board in the browser at `http://localhost:7777`. Reflects the current state of your `tasks/` folder and auto-refreshes every 3 seconds.
+
+```bash
+nod ui
+nod ui --port 8080
+```
+
+## Task file format
+
+```markdown
+---
+id: task-2
+title: "Design database schema"
+type: task
+status: todo
+priority: high
+parent: epic-1
+tags:
+  - database
+created: 2026-04-05
+updated: 2026-04-05
+---
+
+# Design database schema
+
+Decide on the tables and relationships.
+
+## Notes
+
+Looking at PostgreSQL with UUID primary keys.
+
+## Work Log
+
+- 2026-04-05: Started research
+```
+
 ## Statuses
 
-`todo` → `in-progress` → `done`  
-Also: `blocked`, `cancelled`
+`todo` → `in-progress` → `done` · also: `blocked`, `cancelled`
 
 ## Priorities
 
-`critical`, `high`, `medium`, `low`
+`critical` · `high` · `medium` · `low`
 
 ## Using with Claude Code
 
-Claude Code can manage tasks with these patterns:
-
-**Find the next task:**
 ```bash
-nod available --json
-```
-
-**Read a task before starting:**
-```bash
-nod get task-2 --json
-```
-
-**Claim and complete a task:**
-```bash
+nod available --json          # pick next task
+nod get task-2 --json         # read full context
 nod update task-2 --status in-progress
-# ... do the work ...
-nod note task-2 "Completed. Changed X because Y."
+nod note task-2 "Changed X because Y"
 nod update task-2 --status done
-```
-
-**Check epic progress:**
-```bash
-nod epic-tasks epic-1 --json
-```
-
-## Build a standalone binary
-
-```bash
-bun run build
-# Creates dist/nod — a single file, no Bun required
+nod epic-tasks epic-1 --json  # check epic progress
 ```
