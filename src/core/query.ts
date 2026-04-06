@@ -36,6 +36,12 @@ export function getAvailable(tasks: TaskSummary[], opts?: Partial<QueryOptions>)
   return filterTasks(base, opts);
 }
 
+export function getBacklog(tasks: TaskSummary[], opts?: Partial<QueryOptions>): TaskSummary[] {
+  const base = tasks.filter((t) => t.status === 'backlog');
+  if (!opts) return base;
+  return filterTasks(base, opts);
+}
+
 export function buildTree(tasks: TaskSummary[], rootId: string): TreeNode | null {
   const root = tasks.find((t) => t.id === rootId);
   if (!root) return null;

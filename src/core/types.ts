@@ -1,5 +1,5 @@
 export type TaskType = 'epic' | 'task' | 'subtask' | 'bug';
-export type Status = 'todo' | 'in-progress' | 'blocked' | 'done' | 'cancelled';
+export type Status = 'todo' | 'in-progress' | 'backlog' | 'done' | 'cancelled';
 export type Priority = 'critical' | 'high' | 'medium' | 'low';
 
 export interface TaskFrontmatter {
@@ -52,7 +52,7 @@ export interface TreeNode {
 }
 
 export const TASK_TYPES: TaskType[] = ['epic', 'task', 'subtask', 'bug'];
-export const STATUSES: Status[] = ['todo', 'in-progress', 'blocked', 'done', 'cancelled'];
+export const STATUSES: Status[] = ['todo', 'in-progress', 'backlog', 'done', 'cancelled'];
 export const PRIORITIES: Priority[] = ['critical', 'high', 'medium', 'low'];
 
 // Which types can be parents of each type

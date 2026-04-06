@@ -8,7 +8,7 @@ import type { TaskType, Status, Priority } from '../core/types.ts';
 export const listCommand = new Command('list')
   .description('List tasks with optional filters')
   .option('--type <type>', 'Filter by type: epic, task, subtask, bug')
-  .option('--status <status>', 'Filter by status: todo, in-progress, blocked, done, cancelled')
+  .option('--status <status>', 'Filter by status: todo, in-progress, backlog, done, cancelled')
   .option('--priority <priority>', 'Filter by priority: critical, high, medium, low')
   .option('--parent <id>', 'Filter by parent task ID')
   .option('--tags <tags>', 'Filter by tags (comma-separated, all must match)')

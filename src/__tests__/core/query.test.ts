@@ -33,7 +33,7 @@ const tasks: TaskSummary[] = [
   makeTask({ id: 'task-2',    type: 'task',    status: 'in-progress', priority: 'medium',   parent: 'epic-1' }),
   makeTask({ id: 'subtask-1', type: 'subtask', status: 'todo',        priority: 'low',      parent: 'task-1' }),
   makeTask({ id: 'subtask-2', type: 'subtask', status: 'done',        priority: 'low',      parent: 'task-1' }),
-  makeTask({ id: 'bug-1',     type: 'bug',     status: 'blocked',     priority: 'high',     tags: ['auth'] }),
+  makeTask({ id: 'bug-1',     type: 'bug',     status: 'backlog',     priority: 'high',     tags: ['auth'] }),
   makeTask({ id: 'task-3',    type: 'task',    status: 'cancelled',   priority: 'low' }),
 ];
 
@@ -137,9 +137,9 @@ describe('getAvailable', () => {
     expect(statuses.sort()).toEqual(['in-progress', 'todo']);
   });
 
-  it('excludes blocked tasks', () => {
+  it('excludes backlog tasks', () => {
     const result = getAvailable(tasks);
-    expect(result.find(t => t.status === 'blocked')).toBeUndefined();
+    expect(result.find(t => t.status === 'backlog')).toBeUndefined();
   });
 
   it('excludes done tasks', () => {

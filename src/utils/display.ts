@@ -4,7 +4,7 @@ import type { Status, Priority, Task, TaskSummary, TreeNode } from '../core/type
 const STATUS_COLOR: Record<Status, (s: string) => string> = {
   todo: chalk.gray,
   'in-progress': chalk.yellow,
-  blocked: chalk.red,
+  backlog: chalk.magenta,
   done: chalk.green,
   cancelled: chalk.dim,
 };

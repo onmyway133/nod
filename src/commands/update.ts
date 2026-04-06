@@ -10,7 +10,7 @@ import { ValidationError } from '../utils/errors.ts';
 export const updateCommand = new Command('update')
   .description('Update task fields')
   .argument('<id>', 'Task ID')
-  .option('--status <status>', 'New status: todo, in-progress, blocked, done, cancelled')
+  .option('--status <status>', 'New status: todo, in-progress, backlog, done, cancelled')
   .option('--priority <priority>', 'New priority: critical, high, medium, low')
   .option('--title <title>', 'New title')
   .option('--tags <tags>', 'Replace tags (comma-separated)')

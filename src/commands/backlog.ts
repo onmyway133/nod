@@ -2,12 +2,12 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { findNodRoot } from '../core/id.ts';
 import { loadAllSummaries } from '../core/store.ts';
-import { getAvailable, sortByPriority } from '../core/query.ts';
+import { getBacklog, sortByPriority } from '../core/query.ts';
 import { renderTable } from '../utils/display.ts';
 import type { TaskType } from '../core/types.ts';
 
-export const availableCommand = new Command('available')
-  .description('List available tasks (todo or in-progress, not backlog/done/cancelled)')
+export const backlogCommand = new Command('backlog')
+  .description('List backlog tasks')
   .option('--type <type>', 'Filter by type: epic, task, subtask, bug')
   .option('--parent <id>', 'Filter by parent task ID')
   .option('--json', 'Output as JSON')
@@ -15,20 +15,20 @@ export const availableCommand = new Command('available')
     const root = findNodRoot(process.cwd());
     const all = loadAllSummaries(root);
 
-    const available = getAvailable(all, {
+    const backlog = getBacklog(all, {
       type: opts.type as TaskType | undefined,
       parent: opts.parent as string | undefined,
     });
 
-    const sorted = sortByPriority(available);
+    const sorted = sortByPriority(backlog);
 
     if (opts.json) {
       console.log(JSON.stringify(sorted, null, 2));
     } else {
       if (sorted.length === 0) {
-        console.log(chalk.dim('No available tasks.'));
+        console.log(chalk.dim('No backlog tasks.'));
       } else {
-        console.log(chalk.bold('Available Tasks\n'));
+        console.log(chalk.bold('Backlog Tasks\n'));
         console.log(renderTable(sorted));
       }
     }

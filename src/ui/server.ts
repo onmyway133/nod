@@ -1,5 +1,6 @@
 import { findNodRoot } from '../core/id.ts';
 import { loadAllSummaries, findById, loadTask, writeTask } from '../core/store.ts';
+import { seedDemoData } from '../core/seed.ts';
 import type { Status, Priority } from '../core/types.ts';
 import { STATUSES, PRIORITIES } from '../core/types.ts';
 // Bun bundles this as an inline string via the --loader .html:text flag in build.ts
@@ -32,6 +33,19 @@ export function createServer(port: number) {
         return jsonResponse({ tasks, root });
       }
 
+      if (url.pathname.startsWith('/api/task/') && req.method === 'GET') {
+        try {
+          const id = url.pathname.split('/')[3];
+          if (!id) return jsonResponse({ error: 'Missing id' }, 400);
+          const summary = findById(root, id);
+          const task = loadTask(summary.filePath);
+          return jsonResponse({ task });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          return jsonResponse({ error: message }, 404);
+        }
+      }
+
       if (url.pathname === '/api/update' && req.method === 'POST') {
         try {
           const body = (await req.json()) as { id: string; field: string; value: string };
@@ -58,6 +72,16 @@ export function createServer(port: number) {
 
           writeTask(task);
           return jsonResponse({ task });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : 'Unknown error';
+          return jsonResponse({ error: message }, 500);
+        }
+      }
+
+      if (url.pathname === '/api/seed' && req.method === 'POST') {
+        try {
+          const { created } = seedDemoData(root);
+          return jsonResponse({ created });
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Unknown error';
           return jsonResponse({ error: message }, 500);
