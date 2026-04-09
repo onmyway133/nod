@@ -66,7 +66,7 @@ export const createCommand = new Command('create')
     };
 
     const task = createTask(root, frontmatter, filename);
-    console.log(chalk.green(`Created ${id}`) + ` → tasks/${filename}`);
+    console.log(chalk.green(`Created ${id}`) + ` → .nod/tasks/${filename}`);
     if (opts.parent) {
       console.log(chalk.dim(`  Parent: ${opts.parent}`));
     }
