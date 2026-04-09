@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const OUT = path.join(import.meta.dir, '../dist/nod.js');
+const pkg = JSON.parse(fs.readFileSync(path.join(import.meta.dir, '../package.json'), 'utf8'));
 
 console.log('Building nod…');
 
@@ -21,6 +22,7 @@ const result = await Bun.build({
   minify: false,
   sourcemap: 'none',
   loader: { '.html': 'text' },
+  define: { __VERSION__: JSON.stringify(pkg.version) },
 });
 
 if (!result.success) {

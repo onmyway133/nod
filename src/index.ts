@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { NodError } from './utils/errors.ts';
+declare const __VERSION__: string;
 import { initCommand } from './commands/init.ts';
 import { createCommand } from './commands/create.ts';
 import { getCommand } from './commands/get.ts';
@@ -22,7 +23,7 @@ const program = new Command();
 program
   .name('nod')
   .description('Markdown task manager for Claude Code')
-  .version('1.0.0');
+  .version(__VERSION__);
 
 program.addCommand(initCommand);
 program.addCommand(createCommand);
